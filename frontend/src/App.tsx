@@ -1,11 +1,11 @@
 
 import './App.css'
-
+import Home from './pages/Home'
 function App() {
 
   return (
    <>
-   <div className='align-middle text-center size-96 w-full'>Will start soon...</div>
+   <Home />
    </>
   )
 }
