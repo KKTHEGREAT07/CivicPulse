@@ -17,6 +17,7 @@ export interface IIssue extends Document {
   slaDeadline: Date;
   isEscalated: boolean;
   breachedAt?: Date;
+  imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -99,6 +100,10 @@ const issueSchema = new mongoose.Schema<IIssue>(
 
     breachedAt: {
       type: Date
+    },
+    
+    imageUrl: {
+      type: String
     },
   },
   { timestamps: true }

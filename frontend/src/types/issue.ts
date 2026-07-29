@@ -22,6 +22,7 @@ export interface Issue {
   };
 
   isEscalated: boolean;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

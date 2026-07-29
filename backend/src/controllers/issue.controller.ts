@@ -5,11 +5,18 @@ import { calculatePriority } from "../utils/priority";
 import { AuditLog } from "../models/audit.model";
 import mongoose from "mongoose";
 import { User } from "../models/user.model";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: 'u8mpbd6w',
+  api_key: '132795837433923',
+  api_secret: 'TaEl6azGXeEfD_hLJmMNuMSrQYU'
+});
 
 // Create Issue (Resident)
 export const createIssue = async (req: Request, res: Response) => {
   try {
-    const { title, description, category, severity } = req.body;
+    const { title, description, category, severity, image } = req.body;
 
     if (!title || !description || !category) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -79,6 +86,18 @@ export const createIssue = async (req: Request, res: Response) => {
       isBreached
     });
 
+    let imageUrl = undefined;
+    if (image) {
+      try {
+        const uploadRes = await cloudinary.uploader.upload(image, {
+          folder: "civicpulse_issues",
+        });
+        imageUrl = uploadRes.secure_url;
+      } catch (err) {
+        console.error("Cloudinary Upload Error:", err);
+      }
+    }
+
     const issue = await Issue.create({
       title,
       description,
@@ -88,7 +107,8 @@ export const createIssue = async (req: Request, res: Response) => {
       reporters: [user.id],
       reportedBy: user.id,
       society: user.society,
-      slaDeadline
+      slaDeadline,
+      imageUrl
     });
 
     res.status(201).json(issue);
@@ -269,6 +289,7 @@ export const getIssueById = async (req: Request, res: Response) => {
       priority: issue.priorityScore,
       reportCount: issue.reportCount,
       slaDeadline: issue.slaDeadline,
+      imageUrl: issue.imageUrl,
       createdAt: issue.createdAt
     };
 
